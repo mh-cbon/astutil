@@ -172,7 +172,7 @@ func MethodParamNamesInvokation(m *ast.FuncDecl, withEllipse bool) string {
 		ret = append(ret, p.Names[0].Name)
 	}
 	if withEllipse && len(ret) > 0 {
-		ret[len(ret)-1] = "..." + ret[len(ret)-1]
+		ret[len(ret)-1] += "..."
 	}
 	return strings.Join(ret, ", ")
 }

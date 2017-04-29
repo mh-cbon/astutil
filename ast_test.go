@@ -37,7 +37,7 @@ func TestMethodParamNamesInvokation(t *testing.T) {
 		t.Error(err)
 	}
 	y := x.Decls[0].(*ast.FuncDecl)
-	want := "...s"
+	want := "s..."
 	got := MethodParamNamesInvokation(y, true)
 	if want != got {
 		t.Errorf("want %v got %v", want, got)
