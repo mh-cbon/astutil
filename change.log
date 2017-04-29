@@ -1,8 +1,20 @@
 
+0.0.3-beta2
+
+  * fix function MethodParamNamesInvokation
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 16:30:56 +0200
+
+
+
 0.0.3-beta1
 
   * Add new function
     - __MethodParamNamesInvokation__(*ast.FuncDecl, withEllipse) bool: return `s...` with `func(s ...string){}`
+
+
 
 
   - mh-cbon <mh-cbon@users.noreply.github.com>
@@ -36,6 +48,8 @@
 
 
 
+
+
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 15:54:38 +0200
@@ -49,3 +63,5 @@
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 12:32:15 +0200
+
+
