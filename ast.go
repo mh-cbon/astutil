@@ -164,6 +164,13 @@ func MethodParamNames(m *ast.FuncDecl) string {
 	return strings.Join(ret, ", ")
 }
 
+// MethodHasEllipse returns true if last param has ellipse.
+func MethodHasEllipse(m *ast.FuncDecl) bool {
+	l := m.Type.Params.List
+	_, ok := l[len(l)-1].Type.(*ast.Ellipsis)
+	return ok
+}
+
 // MethodParams returns the in signature.
 func MethodParams(m *ast.FuncDecl) string {
 	var ret []string
