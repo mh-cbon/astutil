@@ -7,12 +7,16 @@ LicenseColor: yellow
 
 {{template "badge/goreport" .}} {{template "badge/godoc" .}} {{template "license/shields" .}}
 
-{{pkgdoc}}
+{{pkgdoc "ast.go"}}
 
 # {{toc 5}}
 
 # Install
 {{template "go/install" .}}
+
+# API
+
+Please check the `godoc`: {{template "badge/godoc" .}}
 
 # Recipes
 

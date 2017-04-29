@@ -1,4 +1,5 @@
-package ast
+// Package astutil provides useful methods to work with ast when you intend to make a generator.
+package astutil
 
 import (
 	"bytes"
