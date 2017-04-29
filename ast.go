@@ -164,6 +164,19 @@ func MethodParamNames(m *ast.FuncDecl) string {
 	return strings.Join(ret, ", ")
 }
 
+// MethodParamNamesInvokation reutrns the list of variable in the in signature as an invokation.
+// If withEllipse is true, the last argument gets uses with the ellipse token.
+func MethodParamNamesInvokation(m *ast.FuncDecl, withEllipse bool) string {
+	var ret []string
+	for _, p := range m.Type.Params.List {
+		ret = append(ret, p.Names[0].Name)
+	}
+	if withEllipse && len(ret) > 0 {
+		ret[len(ret)-1] = "..." + ret[len(ret)-1]
+	}
+	return strings.Join(ret, ", ")
+}
+
 // MethodHasEllipse returns true if last param has ellipse.
 func MethodHasEllipse(m *ast.FuncDecl) bool {
 	l := m.Type.Params.List
