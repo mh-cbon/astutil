@@ -180,8 +180,11 @@ func MethodParamNamesInvokation(m *ast.FuncDecl, withEllipse bool) string {
 // MethodHasEllipse returns true if last param has ellipse.
 func MethodHasEllipse(m *ast.FuncDecl) bool {
 	l := m.Type.Params.List
-	_, ok := l[len(l)-1].Type.(*ast.Ellipsis)
-	return ok
+	if len(l) > 0 {
+		_, ok := l[len(l)-1].Type.(*ast.Ellipsis)
+		return ok
+	}
+	return false
 }
 
 // MethodParams returns the in signature.

@@ -26,6 +26,24 @@ func TestHasEllipse(t *testing.T) {
 	}
 }
 
+func TestNotHasEllipse(t *testing.T) {
+	var buf bytes.Buffer
+	buf.WriteString("package t\n")
+	buf.WriteString(`func t(){}`)
+
+	fset := token.NewFileSet()
+	x, err := parser.ParseFile(fset, "nop.go", &buf, 0)
+	if err != nil {
+		t.Error(err)
+	}
+	y := x.Decls[0].(*ast.FuncDecl)
+	want := false
+	got := MethodHasEllipse(y)
+	if want != got {
+		t.Errorf("want %v got %v", want, got)
+	}
+}
+
 func TestMethodParamNamesInvokation(t *testing.T) {
 	var buf bytes.Buffer
 	buf.WriteString("package t\n")
