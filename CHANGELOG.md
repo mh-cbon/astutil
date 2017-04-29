@@ -1,5 +1,24 @@
 # Changelog - astutil
 
+### 0.0.3
+
+__Changes__
+
+- various fixes in
+  - MethodReturnPointer
+  - MethodHasEllipse
+  - MethodParamNamesInvokation
+
+
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Sat 29 Apr 2017 -
+[see the diff](https://github.com/mh-cbon/astutil/compare/0.0.3-beta4...0.0.3#diff)
+______________
+
 ### 0.0.3-beta4
 
 __Changes__
@@ -57,6 +76,7 @@ __Changes__
 
 
 
+
 __Contributors__
 
 - mh-cbon
@@ -90,6 +110,7 @@ __Changes__
   - __GetPointedType__(string) string: Given `T|*T`, returns `*T`
   - __GetUnpointedType__(string) string: Given `T|*T`, returns `T`
   - __IsAPointedType__(string) bool: Given `*T`, returns `true`
+
 
 
 
