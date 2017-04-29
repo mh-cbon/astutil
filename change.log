@@ -1,4 +1,14 @@
 
+0.0.3-beta3
+
+  * fix function MethodHasEllipse when the func does not have any parameters
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 16:35:22 +0200
+
+
+
 0.0.3-beta2
 
   * fix function MethodParamNamesInvokation
@@ -13,6 +23,8 @@
 
   * Add new function
     - __MethodParamNamesInvokation__(*ast.FuncDecl, withEllipse) bool: return `s...` with `func(s ...string){}`
+
+
 
 
 
@@ -42,6 +54,8 @@
     - __GetPointedType__(string) string: Given `T|*T`, returns `*T`
     - __GetUnpointedType__(string) string: Given `T|*T`, returns `T`
     - __IsAPointedType__(string) bool: Given `*T`, returns `true`
+
+
 
 
 
