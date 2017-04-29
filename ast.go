@@ -119,11 +119,11 @@ func MethodReturnPointer(m *ast.FuncDecl) bool {
 	if m.Type.Results != nil {
 		for _, p := range m.Type.Results.List {
 			if _, ok := p.Type.(*ast.Ident); !ok {
-				return false
+				return true
 			}
 		}
 	}
-	return true
+	return false
 }
 
 // MethodReturnTypes returns all types of the out signature.
