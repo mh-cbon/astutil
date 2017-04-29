@@ -216,3 +216,55 @@ func ReceiverType(x *ast.FuncDecl) string {
 	}
 	return ret
 }
+
+// IsAPointedType returns true for starType.
+func IsAPointedType(t string) bool {
+	return t[0] == '*'
+}
+
+// GetUnpointedType always return the dereferenced type.
+// A non pointer types is returned untouched.
+func GetUnpointedType(t string) string {
+	if IsAPointedType(t) {
+		return t[1:]
+	}
+	return t
+}
+
+// GetPointedType always return the type prefixed with a *.
+// A pointer types is returned untouched.
+func GetPointedType(t string) string {
+	if !IsAPointedType(t) {
+		t = "*" + t
+	}
+	return t
+}
+
+//go:generate lister basic_gen.go string:StringSlice
+
+// IsBasic return true when the given type is a basic string...
+// The type is always dereferenced.
+func IsBasic(t string) bool {
+	if IsAPointedType(t) {
+		t = t[1:]
+	}
+	//todo: must have a better way to do this.
+	basicTypes := NewStringSlice().Push(
+		"string",
+		"int",
+		"uint",
+		"int8",
+		"uint8",
+		"int16",
+		"uint16",
+		"int32",
+		"uint32",
+		"int64",
+		"uint64",
+		"float",
+		"float64",
+		"ufloat",
+		"ufloat64",
+	)
+	return basicTypes.Index(t) > -1
+}
