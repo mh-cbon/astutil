@@ -1,4 +1,19 @@
 
+0.0.2
+
+  * add new functions
+    - __IsBasic__(string) bool: to konw if t is string/int...
+    - __GetPointedType__(string) string: Given `T|*T`, returns `*T`
+    - __GetUnpointedType__(string) string: Given `T|*T`, returns `T`
+    - __IsAPointedType__(string) bool: Given `*T`, returns `true`
+
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 15:54:38 +0200
+
+
+
 0.0.1
 
   * Initialize the project.
