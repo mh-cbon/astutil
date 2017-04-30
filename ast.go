@@ -126,6 +126,20 @@ func MethodReturnPointer(m *ast.FuncDecl) bool {
 	return false
 }
 
+// MethodReturnError returns true if the last out param is of type error.
+func MethodReturnError(m *ast.FuncDecl) bool {
+	if m.Type.Results != nil {
+		for _, p := range m.Type.Results.List {
+			if x, ok := p.Type.(*ast.Ident); ok {
+				if x.Name == "error" {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
 // MethodReturnTypes returns all types of the out signature.
 func MethodReturnTypes(m *ast.FuncDecl) []string {
 	var ret []string
@@ -191,10 +205,46 @@ func MethodHasEllipse(m *ast.FuncDecl) bool {
 func MethodParams(m *ast.FuncDecl) string {
 	var ret []string
 	for _, p := range m.Type.Params.List {
-		c := p.Names[0].Name + " " + p.Type.(*ast.Ident).Name
+		c := p.Names[0].Name + " "
+		switch i := p.Type.(type) {
+		case *ast.StarExpr:
+			c += i.X.(*ast.Ident).Name
+		case *ast.Ident:
+			c += i.Name
+		case *ast.ArrayType:
+			// todo: handle i.Len
+			c += "[]" + i.Elt.(*ast.Ident).Name
+		case *ast.Ellipsis:
+			c += "..." + i.Elt.(*ast.Ident).Name
+		default:
+			panic("not handled " + fmt.Sprintf("%T", p.Type))
+		}
 		ret = append(ret, c)
 	}
 	return strings.Join(ret, ", ")
+}
+
+// MethodParamsToProps returns the in signature as property list.
+func MethodParamsToProps(m *ast.FuncDecl) string {
+	var ret []string
+	for _, p := range m.Type.Params.List {
+		c := p.Names[0].Name + " "
+		switch i := p.Type.(type) {
+		case *ast.StarExpr:
+			c += i.X.(*ast.Ident).Name
+		case *ast.Ident:
+			c += i.Name
+		case *ast.ArrayType:
+			// todo: handle i.Len
+			c += "[]" + i.Elt.(*ast.Ident).Name
+		case *ast.Ellipsis:
+			c += "[]" + i.Elt.(*ast.Ident).Name
+		default:
+			panic("not handled " + fmt.Sprintf("%T", p.Type))
+		}
+		ret = append(ret, c)
+	}
+	return strings.Join(ret, "\n")
 }
 
 // SetReceiverName sets the receiver variable name of a method.
