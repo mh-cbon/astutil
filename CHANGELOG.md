@@ -1,5 +1,20 @@
 # Changelog - astutil
 
+### 0.0.5
+
+__Changes__
+
+- MethodParamsToProps: handle func type
+- changelog
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Tue 02 May 2017 -
+[see the diff](https://github.com/mh-cbon/astutil/compare/0.0.4...0.0.5#diff)
+______________
+
 ### 0.0.4
 
 __Changes__
@@ -37,6 +52,8 @@ __Changes__
   - MethodReturnPointer
   - MethodHasEllipse
   - MethodParamNamesInvokation
+
+
 
 
 __Contributors__
@@ -97,6 +114,8 @@ __Changes__
   - __MethodParamNamesInvokation__(*ast.FuncDecl, withEllipse) bool: return `s...` with `func(s ...string){}`
 
 
+
+
 __Contributors__
 
 - mh-cbon
@@ -132,6 +151,8 @@ __Changes__
   - __IsAPointedType__(string) bool: Given `*T`, returns `true`
 
 
+
+
 __Contributors__
 
 - mh-cbon
@@ -152,10 +173,6 @@ __Contributors__
 
 Released by mh-cbon, Sat 29 Apr 2017 -
 [see the diff](https://github.com/mh-cbon/astutil/compare/128ad89fb09c52948212c066b986977f43a2c8c1...0.0.1#diff)
-______________
-
-
-1...0.0.1#diff)
 ______________
 
 
