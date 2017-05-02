@@ -1,4 +1,14 @@
 
+0.0.4
+
+  * MethodParams: handle func type
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Tue, 02 May 2017 12:06:15 +0200
+
+
+
 0.0.4-beta
 
   * MethodParams: it now handles starExpr, arrayExpr and ellipsisExpr.
@@ -16,6 +26,8 @@
     - MethodReturnPointer
     - MethodHasEllipse
     - MethodParamNamesInvokation
+
+
 
 
 
@@ -71,6 +83,8 @@
 
 
 
+
+
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 16:28:10 +0200
@@ -96,6 +110,8 @@
     - __GetPointedType__(string) string: Given `T|*T`, returns `*T`
     - __GetUnpointedType__(string) string: Given `T|*T`, returns `T`
     - __IsAPointedType__(string) bool: Given `*T`, returns `true`
+
+
 
 
 
