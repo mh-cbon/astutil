@@ -245,6 +245,11 @@ func MethodParamsToProps(m *ast.FuncDecl) string {
 			c += "[]" + i.Elt.(*ast.Ident).Name
 		case *ast.Ellipsis:
 			c += "[]" + i.Elt.(*ast.Ident).Name
+		case *ast.FuncType:
+			var buf bytes.Buffer
+			fset := token.NewFileSet()
+			printer.Fprint(&buf, fset, i)
+			c += buf.String()
 		default:
 			panic("not handled " + fmt.Sprintf("%T", p.Type))
 		}
