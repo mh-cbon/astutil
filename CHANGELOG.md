@@ -1,5 +1,19 @@
 # Changelog - astutil
 
+### 0.0.4
+
+__Changes__
+
+- MethodParams: handle func type
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Tue 02 May 2017 -
+[see the diff](https://github.com/mh-cbon/astutil/compare/0.0.4-beta...0.0.4#diff)
+______________
+
 ### 0.0.4-beta
 
 __Changes__
@@ -23,6 +37,8 @@ __Changes__
   - MethodReturnPointer
   - MethodHasEllipse
   - MethodParamNamesInvokation
+
+
 
 
 
@@ -96,6 +112,8 @@ __Changes__
 
 
 
+
+
 __Contributors__
 
 - mh-cbon
@@ -129,6 +147,8 @@ __Changes__
   - __GetPointedType__(string) string: Given `T|*T`, returns `*T`
   - __GetUnpointedType__(string) string: Given `T|*T`, returns `T`
   - __IsAPointedType__(string) bool: Given `*T`, returns `true`
+
+
 
 
 
