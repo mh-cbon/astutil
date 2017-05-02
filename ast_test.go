@@ -71,6 +71,15 @@ func TestMethodParams2(t *testing.T) {
 	}
 }
 
+func TestMethodParams3(t *testing.T) {
+	y := getFuncDecl(`func t(r func()) y {}`)
+	want := "r func()"
+	got := MethodParams(y)
+	if want != got {
+		t.Errorf("want %v got %v", want, got)
+	}
+}
+
 func TestMethodReturnError(t *testing.T) {
 	y := getFuncDecl(`func t(r string, v *pointer, y ...string) (y, error) {}`)
 	want := true
