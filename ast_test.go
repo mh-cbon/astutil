@@ -107,6 +107,60 @@ func TestNotMethodReturnError2(t *testing.T) {
 	}
 }
 
+func TestStructProps(t *testing.T) {
+	y := getStructDecl(`type t struct{k string}`)
+	props := StructProps(y.Type.(*ast.StructType))
+	iwant := 1
+	igot := len(props)
+	if iwant != igot {
+		t.Errorf("want %v got %v", iwant, igot)
+	}
+
+	prop := props[0]
+	want := "k"
+	got := prop["name"]
+	if want != got {
+		t.Errorf("want %v got %v", want, got)
+	}
+	want = "string"
+	got = prop["type"]
+	if want != got {
+		t.Errorf("want %v got %v", want, got)
+	}
+	want = ""
+	got = prop["tag"]
+	if want != got {
+		t.Errorf("want %v got %v", want, got)
+	}
+}
+
+func TestStructProps2(t *testing.T) {
+	y := getStructDecl(`type t struct{k []string}`)
+	props := StructProps(y.Type.(*ast.StructType))
+	iwant := 1
+	igot := len(props)
+	if iwant != igot {
+		t.Errorf("want %v got %v", iwant, igot)
+	}
+
+	prop := props[0]
+	want := "k"
+	got := prop["name"]
+	if want != got {
+		t.Errorf("want %v got %v", want, got)
+	}
+	want = "[]string"
+	got = prop["type"]
+	if want != got {
+		t.Errorf("want %v got %v", want, got)
+	}
+	want = ""
+	got = prop["tag"]
+	if want != got {
+		t.Errorf("want %v got %v", want, got)
+	}
+}
+
 func getFuncDecl(s string) *ast.FuncDecl {
 	var buf bytes.Buffer
 	buf.WriteString("package t\n")
@@ -118,4 +172,17 @@ func getFuncDecl(s string) *ast.FuncDecl {
 		panic(err)
 	}
 	return x.Decls[0].(*ast.FuncDecl)
+}
+
+func getStructDecl(s string) *ast.TypeSpec {
+	var buf bytes.Buffer
+	buf.WriteString("package t\n")
+	buf.WriteString(s)
+
+	fset := token.NewFileSet()
+	x, err := parser.ParseFile(fset, "nop.go", &buf, 0)
+	if err != nil {
+		panic(err)
+	}
+	return x.Decls[0].(*ast.GenDecl).Specs[0].(*ast.TypeSpec)
 }

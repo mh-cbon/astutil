@@ -119,7 +119,7 @@ func MethodName(m *ast.FuncDecl) string {
 func MethodReturnPointer(m *ast.FuncDecl) bool {
 	if m.Type.Results != nil {
 		for _, p := range m.Type.Results.List {
-			if _, ok := p.Type.(*ast.Ident); !ok {
+			if _, ok := p.Type.(*ast.StarExpr); ok {
 				return true
 			}
 		}
@@ -146,10 +146,14 @@ func MethodReturnTypes(m *ast.FuncDecl) []string {
 	var ret []string
 	if m.Type.Results != nil {
 		for _, p := range m.Type.Results.List {
-			if x, ok := p.Type.(*ast.Ident); ok {
-				ret = append(ret, x.Name)
-			} else if y, ok := p.Type.(*ast.StarExpr); ok {
+			switch y := p.Type.(type) {
+			case *ast.Ident:
+				ret = append(ret, y.Name)
+			// case *ast.ArrayType:
+			case *ast.StarExpr:
 				ret = append(ret, y.X.(*ast.Ident).Name)
+			default:
+				panic("nop, " + fmt.Sprintf("%T", p.Type))
 			}
 		}
 	}
@@ -325,6 +329,23 @@ func GetPointedType(t string) string {
 }
 
 //go:generate lister basic_gen.go string:StringSlice
+var basicTypes = NewStringSlice().Push(
+	"string",
+	"int",
+	"uint",
+	"int8",
+	"uint8",
+	"int16",
+	"uint16",
+	"int32",
+	"uint32",
+	"int64",
+	"uint64",
+	"float",
+	"float64",
+	"ufloat",
+	"ufloat64",
+)
 
 // IsBasic return true when the given type is a basic string...
 // The type is always dereferenced.
@@ -333,22 +354,67 @@ func IsBasic(t string) bool {
 		t = t[1:]
 	}
 	//todo: must have a better way to do this.
-	basicTypes := NewStringSlice().Push(
-		"string",
-		"int",
-		"uint",
-		"int8",
-		"uint8",
-		"int16",
-		"uint16",
-		"int32",
-		"uint32",
-		"int64",
-		"uint64",
-		"float",
-		"float64",
-		"ufloat",
-		"ufloat64",
-	)
 	return basicTypes.Index(t) > -1
+}
+
+// GetStruct searches given package for a struct named s
+func GetStruct(p *loader.PackageInfo, s string) *ast.StructType {
+	var ret *ast.StructType
+	for _, file := range p.Files {
+		ast.Inspect(file, func(n ast.Node) bool {
+			switch x := n.(type) {
+			case *ast.TypeSpec:
+				if y, ok := x.Type.(*ast.StructType); ok && x.Name.Name == s {
+					ret = y
+					return false
+				}
+			}
+			return true
+		})
+	}
+	return ret
+}
+
+// StructProps returns all props and their types of type s.
+func StructProps(s *ast.StructType) []map[string]string {
+	ret := []map[string]string{}
+	for _, f := range s.Fields.List {
+		t := ""
+		if f.Tag != nil {
+			t = ToString(f.Tag)
+		}
+		name := ""
+		for _, n := range f.Names {
+			name += ToString(n) + "."
+		}
+
+		ret = append(ret, map[string]string{
+			"name": strings.TrimRight(name, "."),
+			"type": ToString(f.Type),
+			"tag":  t,
+		})
+	}
+	return ret
+}
+
+// IsArrayType returns true when the given string is an []Array.
+func IsArrayType(s string) bool {
+	return len(s) > 0 && s[0] == '['
+}
+
+// IsStarType returns true when the given string is a *Star.
+func IsStarType(s string) bool {
+	return len(s) > 0 && s[0] == '*'
+}
+
+// ToString takes an ast.Node and print it to string.
+// It does not accept nil values, please check it ahead.
+func ToString(n interface{}) string {
+	if n == nil {
+		return ""
+	}
+	var buf bytes.Buffer
+	fset := token.NewFileSet()
+	printer.Fprint(&buf, fset, n)
+	return buf.String()
 }
