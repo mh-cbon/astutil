@@ -1,5 +1,5 @@
 
-UNRELEASED
+0.0.6
 
   * __new__
     - GetStruct: Get struct ast node of a struct name.
@@ -10,9 +10,12 @@ UNRELEASED
   * __updated__
     - MethodParamsToProps: handle func type
 
+
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Wed, 03 May 2017 10:53:19 +0200
+
+
 
 0.0.4
 
@@ -21,6 +24,8 @@ UNRELEASED
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Tue, 02 May 2017 12:06:15 +0200
+
+
 
 0.0.4-beta
 
@@ -31,6 +36,8 @@ UNRELEASED
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Sun, 30 Apr 2017 16:37:17 +0200
 
+
+
 0.0.3
 
   * various fixes in
@@ -38,9 +45,12 @@ UNRELEASED
     - MethodHasEllipse
     - MethodParamNamesInvokation
 
+
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 17:32:56 +0200
+
+
 
 0.0.3-beta4
 
@@ -50,6 +60,8 @@ UNRELEASED
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 17:32:56 +0200
 
+
+
 0.0.3-beta3
 
   * fix function MethodHasEllipse when the func does not have any parameters
@@ -57,6 +69,8 @@ UNRELEASED
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 16:35:22 +0200
+
+
 
 0.0.3-beta2
 
@@ -66,14 +80,19 @@ UNRELEASED
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 16:30:56 +0200
 
+
+
 0.0.3-beta1
 
   * Add new function
     - __MethodParamNamesInvokation__(*ast.FuncDecl, withEllipse) bool: return `s...` with `func(s ...string){}`
 
+
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 16:28:10 +0200
+
+
 
 0.0.3-beta
 
@@ -85,6 +104,8 @@ UNRELEASED
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 16:21:15 +0200
 
+
+
 0.0.2
 
   * Add new functions
@@ -93,9 +114,12 @@ UNRELEASED
     - __GetUnpointedType__(string) string: Given `T|*T`, returns `T`
     - __IsAPointedType__(string) bool: Given `*T`, returns `true`
 
+
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 15:54:38 +0200
+
+
 
 0.0.1
 
@@ -104,3 +128,5 @@ UNRELEASED
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 12:32:15 +0200
+
+
