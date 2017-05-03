@@ -1,138 +1,161 @@
+# Changelog - astutil
 
-UNRELEASED
+### 0.0.6
 
-  * __new__
-    - GetStruct: Get struct ast node of a struct name.
-    - StructProps: Get properties of a struct.
-    - IsArrayType: Is given string an array like exp ?
-    - IsStarType: Is given string a star expr ?
-    - ToString: Prints ast.Node to string.
-  * __updated__
-    - MethodParamsToProps: handle func type
+__Changes__
 
+- __new__
+  - GetStruct: Get struct ast node of a struct name.
+  - StructProps: Get properties of a struct.
+  - IsArrayType: Is given string an array like exp ?
+  - IsStarType: Is given string a star expr ?
+  - ToString: Prints ast.Node to string.
+- __updated__
+  - MethodParamsToProps: handle func type
 
-  - mh-cbon <mh-cbon@users.noreply.github.com>
 
--- mh-cbon <mh-cbon@users.noreply.github.com>; Wed, 03 May 2017 10:53:19 +0200
 
+__Contributors__
 
+- mh-cbon
 
-0.0.4
+Released by mh-cbon, Wed 03 May 2017 -
+[see the diff](https://github.com/mh-cbon/astutil/compare/0.0.4...0.0.6#diff)
+______________
 
-  * MethodParams: handle func type
+### 0.0.4
 
-  - mh-cbon <mh-cbon@users.noreply.github.com>
+__Changes__
 
--- mh-cbon <mh-cbon@users.noreply.github.com>; Tue, 02 May 2017 12:06:15 +0200
+- MethodParams: handle func type
 
+__Contributors__
 
+- mh-cbon
 
-0.0.4-beta
+Released by mh-cbon, Tue 02 May 2017 -
+[see the diff](https://github.com/mh-cbon/astutil/compare/0.0.4-beta...0.0.4#diff)
+______________
 
-  * MethodParams: it now handles starExpr, arrayExpr and ellipsisExpr.
-  * added MethodParamsToProps: useful to create a struct/map.
+### 0.0.4-beta
 
-  - mh-cbon <mh-cbon@users.noreply.github.com>
+__Changes__
 
--- mh-cbon <mh-cbon@users.noreply.github.com>; Sun, 30 Apr 2017 16:37:17 +0200
+- MethodParams: it now handles starExpr, arrayExpr and ellipsisExpr.
+- added MethodParamsToProps: useful to create a struct/map.
 
+__Contributors__
 
+- mh-cbon
 
-0.0.3
+Released by mh-cbon, Sun 30 Apr 2017 -
+[see the diff](https://github.com/mh-cbon/astutil/compare/0.0.3...0.0.4-beta#diff)
+______________
 
-  * various fixes in
-    - MethodReturnPointer
-    - MethodHasEllipse
-    - MethodParamNamesInvokation
+### 0.0.3
 
+__Changes__
 
-  - mh-cbon <mh-cbon@users.noreply.github.com>
+- various fixes in
+  - MethodReturnPointer
+  - MethodHasEllipse
+  - MethodParamNamesInvokation
 
--- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 17:32:56 +0200
 
 
+__Contributors__
 
-0.0.3-beta4
+- mh-cbon
 
-  * fix MethodReturnPointer
+Released by mh-cbon, Sat 29 Apr 2017 -
+[see the diff](https://github.com/mh-cbon/astutil/compare/0.0.3-beta4...0.0.3#diff)
+______________
 
-  - mh-cbon <mh-cbon@users.noreply.github.com>
+### 0.0.3-beta4
 
--- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 17:32:56 +0200
+__Changes__
 
+- fix MethodReturnPointer
 
+__Contributors__
 
-0.0.3-beta3
+- mh-cbon
 
-  * fix function MethodHasEllipse when the func does not have any parameters
+Released by mh-cbon, Sat 29 Apr 2017 -
+[see the diff](https://github.com/mh-cbon/astutil/compare/0.0.3-beta3...0.0.3-beta4#diff)
+______________
 
-  - mh-cbon <mh-cbon@users.noreply.github.com>
+### 0.0.3-beta3
 
--- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 16:35:22 +0200
+__Changes__
 
+- fix function MethodHasEllipse when the func does not have any parameters
 
+__Contributors__
 
-0.0.3-beta2
+- mh-cbon
 
-  * fix function MethodParamNamesInvokation
+Released by mh-cbon, Sat 29 Apr 2017 -
+[see the diff](https://github.com/mh-cbon/astutil/compare/0.0.3-beta2...0.0.3-beta3#diff)
+______________
 
-  - mh-cbon <mh-cbon@users.noreply.github.com>
+### 0.0.3-beta2
 
--- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 16:30:56 +0200
+__Changes__
 
+- fix function MethodParamNamesInvokation
 
+__Contributors__
 
-0.0.3-beta1
+- mh-cbon
 
-  * Add new function
-    - __MethodParamNamesInvokation__(*ast.FuncDecl, withEllipse) bool: return `s...` with `func(s ...string){}`
+Released by mh-cbon, Sat 29 Apr 2017 -
+[see the diff](https://github.com/mh-cbon/astutil/compare/0.0.3-beta1...0.0.3-beta2#diff)
+______________
 
+### 0.0.3-beta1
 
-  - mh-cbon <mh-cbon@users.noreply.github.com>
+__Changes__
 
--- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 16:28:10 +0200
+- Add new function
+  - __MethodParamNamesInvokation__(*ast.FuncDecl, withEllipse) bool: return `s...` with `func(s ...string){}`
 
 
 
-0.0.3-beta
+__Contributors__
 
-  * Add new function
-    - __MethodHasEllipse__(*ast.FuncDecl) bool: return true if the last params uses ellipse.
-  * Initialize tests
+- mh-cbon
 
-  - mh-cbon <mh-cbon@users.noreply.github.com>
+Released by mh-cbon, Sat 29 Apr 2017 -
+[see the diff](https://github.com/mh-cbon/astutil/compare/0.0.3-beta...0.0.3-beta1#diff)
+______________
 
--- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 16:21:15 +0200
+### 0.0.3-beta
 
+__Changes__
 
+- Add new function
+  - __MethodHasEllipse__(*ast.FuncDecl) bool: return true if the last params uses ellipse.
+- Initialize tests
 
-0.0.2
+__Contributors__
 
-  * Add new functions
-    - __IsBasic__(string) bool: to konw if t is string/int...
-    - __GetPointedType__(string) string: Given `T|*T`, returns `*T`
-    - __GetUnpointedType__(string) string: Given `T|*T`, returns `T`
-    - __IsAPointedType__(string) bool: Given `*T`, returns `true`
+- mh-cbon
 
+Released by mh-cbon, Sat 29 Apr 2017 -
+[see the diff](https://github.com/mh-cbon/astutil/compare/0.0.2...0.0.3-beta#diff)
+______________
 
-  - mh-cbon <mh-cbon@users.noreply.github.com>
+### 0.0.2
 
--- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 15:54:38 +0200
+__Changes__
 
-
-
-0.0.1
-
-  * Initialize the project.
-
-  - mh-cbon <mh-cbon@users.noreply.github.com>
-
--- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 12:32:15 +0200
-
-
-ntedType__(string) string: Given `T|*T`, returns `*T`
+- Add new functions
+  - __IsBasic__(string) bool: to konw if t is string/int...
+  - __GetPointedType__(string) string: Given `T|*T`, returns `*T`
   - __GetUnpointedType__(string) string: Given `T|*T`, returns `T`
   - __IsAPointedType__(string) bool: Given `*T`, returns `true`
+
 
 
 __Contributors__
