@@ -24,9 +24,17 @@ func GetProgram(s string) *loader.Program {
 	if err != nil {
 		fmt.Println(err)
 	}
+	// those 3 might change later. not sure.
+	conf.TypeChecker.IgnoreFuncBodies = true
+	conf.TypeChecker.DisableUnusedImportCheck = true
+	conf.TypeChecker.Error = func(err error) {
+		log.Println(err)
+	}
+	// this really matters otherise its a pain to generate a partial program.
+	conf.AllowErrors = true
 	prog, err := conf.Load()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	return prog
