@@ -1,5 +1,24 @@
 # Changelog - astutil
 
+### 0.0.7
+
+__Changes__
+
+- GetProgram: improve loader configuration
+  - Allow errors while reading source package
+  - Type checker ignore function bodies
+  - Type checker disable unused check
+
+
+
+__Contributors__
+
+- mh-cbon
+
+Released by mh-cbon, Fri 05 May 2017 -
+[see the diff](https://github.com/mh-cbon/astutil/compare/0.0.6...0.0.7#diff)
+______________
+
 ### 0.0.6
 
 __Changes__
@@ -12,6 +31,8 @@ __Changes__
   - ToString: Prints ast.Node to string.
 - __updated__
   - MethodParamsToProps: handle func type
+
+
 
 
 
@@ -60,6 +81,8 @@ __Changes__
   - MethodReturnPointer
   - MethodHasEllipse
   - MethodParamNamesInvokation
+
+
 
 
 
@@ -122,6 +145,8 @@ __Changes__
 
 
 
+
+
 __Contributors__
 
 - mh-cbon
@@ -155,6 +180,8 @@ __Changes__
   - __GetPointedType__(string) string: Given `T|*T`, returns `*T`
   - __GetUnpointedType__(string) string: Given `T|*T`, returns `T`
   - __IsAPointedType__(string) bool: Given `*T`, returns `true`
+
+
 
 
 
