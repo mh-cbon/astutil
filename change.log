@@ -1,4 +1,18 @@
 
+0.0.7
+
+  * GetProgram: improve loader configuration
+    - Allow errors while reading source package
+    - Type checker ignore function bodies
+    - Type checker disable unused check
+
+
+  - mh-cbon <mh-cbon@users.noreply.github.com>
+
+-- mh-cbon <mh-cbon@users.noreply.github.com>; Fri, 05 May 2017 23:28:57 +0200
+
+
+
 0.0.6
 
   * __new__
@@ -9,6 +23,8 @@
     - ToString: Prints ast.Node to string.
   * __updated__
     - MethodParamsToProps: handle func type
+
+
 
 
   - mh-cbon <mh-cbon@users.noreply.github.com>
@@ -44,6 +60,8 @@
     - MethodReturnPointer
     - MethodHasEllipse
     - MethodParamNamesInvokation
+
+
 
 
   - mh-cbon <mh-cbon@users.noreply.github.com>
@@ -88,6 +106,8 @@
     - __MethodParamNamesInvokation__(*ast.FuncDecl, withEllipse) bool: return `s...` with `func(s ...string){}`
 
 
+
+
   - mh-cbon <mh-cbon@users.noreply.github.com>
 
 -- mh-cbon <mh-cbon@users.noreply.github.com>; Sat, 29 Apr 2017 16:28:10 +0200
@@ -113,6 +133,8 @@
     - __GetPointedType__(string) string: Given `T|*T`, returns `*T`
     - __GetUnpointedType__(string) string: Given `T|*T`, returns `T`
     - __IsAPointedType__(string) bool: Given `*T`, returns `true`
+
+
 
 
   - mh-cbon <mh-cbon@users.noreply.github.com>
