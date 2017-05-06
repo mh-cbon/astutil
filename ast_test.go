@@ -85,6 +85,38 @@ func TestMethodParams3(t *testing.T) {
 	}
 }
 
+func TestMethodReturnTypes(t *testing.T) {
+	y := getFuncDecl(`func t(r string, v *pointer, y ...string) (y, error) {}`)
+	want := []string{"y", "error"}
+	got := MethodReturnTypes(y)
+	if want[0] != got[0] {
+		t.Errorf("want %v got %v", want[0], got[0])
+	}
+	if want[1] != got[1] {
+		t.Errorf("want %v got %v", want[1], got[1])
+	}
+}
+
+func TestMethodReturnTypes2(t *testing.T) {
+	y := getFuncDecl(`func t(r string, v *pointer, y ...string) (*y, []error) {}`)
+	want := []string{"*y", "[]error"}
+	got := MethodReturnTypes(y)
+	if want[0] != got[0] {
+		t.Errorf("want %v got %v", want[0], got[0])
+	}
+	if want[1] != got[1] {
+		t.Errorf("want %v got %v", want[1], got[1])
+	}
+}
+
+func TestNotMethodReturnTypes(t *testing.T) {
+	y := getFuncDecl(`func t(r string, v *pointer, y ...string) {}`)
+	got := MethodReturnTypes(y)
+	if len(got) > 0 {
+		t.Errorf("want %v got %v", 0, got)
+	}
+}
+
 func TestMethodReturnError(t *testing.T) {
 	y := getFuncDecl(`func t(r string, v *pointer, y ...string) (y, error) {}`)
 	want := true

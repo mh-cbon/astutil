@@ -156,15 +156,7 @@ func MethodReturnTypes(m *ast.FuncDecl) []string {
 	var ret []string
 	if m.Type.Results != nil {
 		for _, p := range m.Type.Results.List {
-			switch y := p.Type.(type) {
-			case *ast.Ident:
-				ret = append(ret, y.Name)
-			// case *ast.ArrayType:
-			case *ast.StarExpr:
-				ret = append(ret, y.X.(*ast.Ident).Name)
-			default:
-				panic("nop, " + fmt.Sprintf("%T", p.Type))
-			}
+			ret = append(ret, ToString(p.Type))
 		}
 	}
 	return ret
@@ -189,6 +181,15 @@ func MethodParamNames(m *ast.FuncDecl) string {
 	var ret []string
 	for _, p := range m.Type.Params.List {
 		ret = append(ret, p.Names[0].Name)
+	}
+	return strings.Join(ret, ", ")
+}
+
+// MethodParamTypes reutrns the list of variable type in the in signature.
+func MethodParamTypes(m *ast.FuncDecl) string {
+	var ret []string
+	for _, p := range m.Type.Params.List {
+		ret = append(ret, ToString(p.Type))
 	}
 	return strings.Join(ret, ", ")
 }
