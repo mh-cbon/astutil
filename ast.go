@@ -221,24 +221,7 @@ func MethodParams(m *ast.FuncDecl) string {
 	var ret []string
 	for _, p := range m.Type.Params.List {
 		c := p.Names[0].Name + " "
-		switch i := p.Type.(type) {
-		case *ast.StarExpr:
-			c += i.X.(*ast.Ident).Name
-		case *ast.Ident:
-			c += i.Name
-		case *ast.ArrayType:
-			// todo: handle i.Len
-			c += "[]" + i.Elt.(*ast.Ident).Name
-		case *ast.Ellipsis:
-			c += "..." + i.Elt.(*ast.Ident).Name
-		case *ast.FuncType:
-			var buf bytes.Buffer
-			fset := token.NewFileSet()
-			printer.Fprint(&buf, fset, i)
-			c += buf.String()
-		default:
-			panic("not handled " + fmt.Sprintf("%T", p.Type))
-		}
+		c += ToString(p.Type)
 		ret = append(ret, c)
 	}
 	return strings.Join(ret, ", ")
@@ -250,22 +233,10 @@ func MethodParamsToProps(m *ast.FuncDecl) string {
 	for _, p := range m.Type.Params.List {
 		c := p.Names[0].Name + " "
 		switch i := p.Type.(type) {
-		case *ast.StarExpr:
-			c += i.X.(*ast.Ident).Name
-		case *ast.Ident:
-			c += i.Name
-		case *ast.ArrayType:
-			// todo: handle i.Len
-			c += "[]" + i.Elt.(*ast.Ident).Name
 		case *ast.Ellipsis:
-			c += "[]" + i.Elt.(*ast.Ident).Name
-		case *ast.FuncType:
-			var buf bytes.Buffer
-			fset := token.NewFileSet()
-			printer.Fprint(&buf, fset, i)
-			c += buf.String()
+			c += "[]" + ToString(i.Elt)
 		default:
-			panic("not handled " + fmt.Sprintf("%T", p.Type))
+			c += ToString(p.Type)
 		}
 		ret = append(ret, c)
 	}

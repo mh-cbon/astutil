@@ -69,7 +69,7 @@ func TestMethodParams(t *testing.T) {
 
 func TestMethodParams2(t *testing.T) {
 	y := getFuncDecl(`func t(r string, v *pointer, u []slice, y ...string) y {}`)
-	want := "r string, v pointer, u []slice, y ...string"
+	want := "r string, v *pointer, u []slice, y ...string"
 	got := MethodParams(y)
 	if want != got {
 		t.Errorf("want %v got %v", want, got)
