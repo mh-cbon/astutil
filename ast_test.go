@@ -2,10 +2,15 @@ package astutil
 
 import (
 	"bytes"
+	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"log"
+	"os"
 	"testing"
+
+	"golang.org/x/tools/go/loader"
 )
 
 func TestHasEllipse(t *testing.T) {
@@ -161,6 +166,41 @@ func TestStructProps2(t *testing.T) {
 	}
 }
 
+func TestGetComment(t *testing.T) {
+	prog := getProgramFromString(`// the comment.
+// with two lines.
+type T struct{k []string}`)
+	pkg := prog.Package("thepackagename")
+	s := GetStruct(pkg, "T")
+	got := GetComment(prog, s.Pos())
+	want := `the comment.
+with two lines.
+`
+	if want != got {
+		t.Errorf("want=%q got=%q", want, got)
+	}
+}
+
+func TestGetAnnotations(t *testing.T) {
+	prog := getProgramFromString(`//T is a type.
+// @annotation is an annotation.
+type T struct{k []string}`)
+	pkg := prog.Package("thepackagename")
+	s := GetStruct(pkg, "T")
+	comment := GetComment(prog, s.Pos())
+	got := GetAnnotations(comment, "@")
+	want := "is an annotation."
+	key := "annotation"
+	if annot, ok := got[key]; ok {
+		if annot != want {
+			t.Errorf("want=%q got=%q", want, annot)
+
+		}
+	} else {
+		t.Errorf("key %q not found", key)
+	}
+}
+
 func getFuncDecl(s string) *ast.FuncDecl {
 	var buf bytes.Buffer
 	buf.WriteString("package t\n")
@@ -185,4 +225,31 @@ func getStructDecl(s string) *ast.TypeSpec {
 		panic(err)
 	}
 	return x.Decls[0].(*ast.GenDecl).Specs[0].(*ast.TypeSpec)
+}
+
+func getProgramFromString(s string) *loader.Program {
+	var buf bytes.Buffer
+	buf.WriteString("package thepackagename\n\n")
+	buf.WriteString(s)
+
+	var conf loader.Config
+	conf.ParserMode = parser.ParseComments
+	// those 3 might change later. not sure.
+	conf.TypeChecker.IgnoreFuncBodies = true
+	conf.TypeChecker.DisableUnusedImportCheck = true
+	conf.TypeChecker.Error = func(err error) {
+		log.Println(err)
+	}
+	// this really matters otherise its a pain to generate a partial program.
+	conf.AllowErrors = true
+	file, err := conf.ParseFile(os.Getenv("gopath")+"/src/y/t.go", &buf)
+	if err != nil {
+		fmt.Println(err)
+	}
+	conf.CreateFromFiles("thepackagename", file)
+	prog, err := conf.Load()
+	if err != nil {
+		log.Println(err)
+	}
+	return prog
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"go/ast"
 	"go/format"
+	"go/parser"
 	"go/printer"
 	"go/token"
 	"log"
@@ -20,10 +21,7 @@ func GetProgram(s string) *loader.Program {
 	args := []string{"--", s}
 
 	var conf loader.Config
-	_, err := conf.FromArgs(args[1:], false)
-	if err != nil {
-		fmt.Println(err)
-	}
+	conf.ParserMode = parser.ParseComments
 	// those 3 might change later. not sure.
 	conf.TypeChecker.IgnoreFuncBodies = true
 	conf.TypeChecker.DisableUnusedImportCheck = true
@@ -32,6 +30,10 @@ func GetProgram(s string) *loader.Program {
 	}
 	// this really matters otherise its a pain to generate a partial program.
 	conf.AllowErrors = true
+	_, err := conf.FromArgs(args[1:], false)
+	if err != nil {
+		fmt.Println(err)
+	}
 	prog, err := conf.Load()
 	if err != nil {
 		log.Println(err)
@@ -425,4 +427,40 @@ func ToString(n interface{}) string {
 	fset := token.NewFileSet()
 	printer.Fprint(&buf, fset, n)
 	return buf.String()
+}
+
+// GetComment takes an ast.Node to find its comment.
+func GetComment(prog *loader.Program, t token.Pos) string {
+	_, path, _ := prog.PathEnclosingInterval(t, t)
+	for _, n := range path {
+		switch n := n.(type) {
+		case *ast.GenDecl:
+			return n.Doc.Text()
+		case *ast.FuncDecl:
+			return n.Doc.Text()
+		}
+	}
+	return ""
+}
+
+// GetAnnotations extracts annotations of a comment.
+// start is the symbol starting an annotation.
+// If start is @,
+// @annotationName annotationValue
+func GetAnnotations(comment string, start string) map[string]string {
+	ret := map[string]string{}
+	lines := strings.Split(comment, "\n")
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if len(line) > len(start) && line[:len(start)] == start {
+			line = line[len(start):]
+			x := strings.Split(line, " ")
+			if len(x) > 1 {
+				name := x[0]
+				value := strings.Join(x[1:], " ")
+				ret[name] = value
+			}
+		}
+	}
+	return ret
 }
