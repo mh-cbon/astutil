@@ -17,7 +17,6 @@ import (
 
 // GetProgram load program of s a pkg path
 func GetProgram(s string) *loader.Program {
-
 	args := []string{"--", s}
 
 	var conf loader.Config
@@ -40,6 +39,33 @@ func GetProgram(s string) *loader.Program {
 	}
 
 	return prog
+}
+
+// GetImportPath return the import path of an identifier.
+func GetImportPath(p *loader.PackageInfo, name string) string {
+	ret := ""
+	for _, file := range p.Files {
+		ast.Inspect(file, func(n ast.Node) bool {
+			switch x := n.(type) {
+			case *ast.ImportSpec:
+				if x.Path != nil {
+					if x.Name != nil && x.Name.Name == name {
+						y := x.Path.Value[1:]
+						y = y[:len(y)-1] //rm ""
+						if y != name {
+							ret = y
+						}
+					} else if strings.HasSuffix(x.Path.Value, "/"+name+"\"") {
+						y := x.Path.Value[1:]
+						y = y[:len(y)-1] //rm ""
+						ret = y
+					}
+				}
+			}
+			return true
+		})
+	}
+	return ret
 }
 
 // FindTypes searches given package for every struct types definition
@@ -118,6 +144,11 @@ func PrintPkg(p *loader.PackageInfo) string {
 		b.WriteString(Print(file))
 	}
 	return b.String()
+}
+
+// IsExported name.
+func IsExported(m string) bool {
+	return ast.IsExported(m)
 }
 
 // MethodName returns the name of given func
@@ -244,6 +275,36 @@ func MethodParamsToProps(m *ast.FuncDecl) string {
 	return strings.Join(ret, "\n")
 }
 
+// GetSignatureImportIdentifiers extract import identifers from the method signature.
+func GetSignatureImportIdentifiers(m *ast.FuncDecl) []string {
+	ret := []string{}
+	paramsType := MethodParamTypes(m)
+	for _, p := range strings.Split(paramsType, ", ") {
+		p = strings.TrimSpace(p)
+		x := strings.Split(p, ".")
+		if len(x) > 1 {
+			y := GetUnpointedType(x[0])
+			y = GetUnslicedType(y) //todo: can do better.
+			if len(y) > 0 {
+				ret = append(ret, y)
+			}
+		}
+	}
+	returnsType := MethodReturnTypes(m)
+	for _, p := range returnsType {
+		p = strings.TrimSpace(p)
+		x := strings.Split(p, ".")
+		if len(x) > 1 {
+			y := GetUnpointedType(x[0])
+			y = GetUnslicedType(y) //todo: can do better.
+			if len(y) > 0 {
+				ret = append(ret, y)
+			}
+		}
+	}
+	return ret
+}
+
 // SetReceiverName sets the receiver variable name of a method.
 func SetReceiverName(m *ast.FuncDecl, name string) {
 	m.Recv.List[0].Names[0].Name = name
@@ -289,7 +350,7 @@ func ReceiverType(x *ast.FuncDecl) string {
 
 // IsAPointedType returns true for starType.
 func IsAPointedType(t string) bool {
-	return t[0] == '*'
+	return len(t) > 0 && t[0] == '*'
 }
 
 // GetUnpointedType always return the dereferenced type.
@@ -306,6 +367,20 @@ func GetUnpointedType(t string) string {
 func GetPointedType(t string) string {
 	if !IsAPointedType(t) {
 		t = "*" + t
+	}
+	return t
+}
+
+// IsASlicedType returns true for sliceType.
+func IsASlicedType(t string) bool {
+	return len(t) > 1 && t[:1] == "[]"
+}
+
+// GetUnslicedType always return the unsliced type.
+// A non pointer types is returned untouched.
+func GetUnslicedType(t string) string {
+	if IsASlicedType(t) {
+		return t[2:]
 	}
 	return t
 }
