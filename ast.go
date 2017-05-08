@@ -85,6 +85,25 @@ func FindTypes(p *loader.PackageInfo) []string {
 	return foundTypes
 }
 
+// FindStruct searches given package for struct matching given name
+func FindStruct(p *loader.PackageInfo, search string) *ast.TypeSpec {
+	var ret *ast.TypeSpec
+	for _, file := range p.Files {
+		ast.Inspect(file, func(n ast.Node) bool {
+			switch x := n.(type) {
+			case *ast.TypeSpec:
+				if _, ok := x.Type.(*ast.StructType); ok {
+					if search == x.Name.Name {
+						ret = x
+					}
+				}
+			}
+			return true
+		})
+	}
+	return ret
+}
+
 // FindMethods searches given package for every struct methods definition
 func FindMethods(p *loader.PackageInfo) map[string][]*ast.FuncDecl {
 	foundMethods := map[string][]*ast.FuncDecl{}
