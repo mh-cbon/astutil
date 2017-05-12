@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"go/ast"
+	"go/build"
 	"go/format"
 	"go/parser"
 	"go/printer"
@@ -29,6 +30,43 @@ func GetProgram(s string) *loader.Program {
 	}
 	// this really matters otherise its a pain to generate a partial program.
 	conf.AllowErrors = true
+	_, err := conf.FromArgs(args[1:], false)
+	if err != nil {
+		fmt.Println(err)
+	}
+	prog, err := conf.Load()
+	if err != nil {
+		log.Println(err)
+	}
+
+	return prog
+}
+
+// GetProgramFast load program of s a pkg path
+func GetProgramFast(s string) *loader.Program {
+	args := []string{"--", s}
+
+	var conf loader.Config
+	conf.ParserMode = parser.ParseComments
+	// those 3 might change later. not sure.
+	conf.TypeChecker.IgnoreFuncBodies = true
+	conf.TypeChecker.DisableUnusedImportCheck = true
+	conf.TypeChecker.Error = func(err error) {
+		if strings.Index(err.Error(), "could not import") == -1 ||
+			strings.Index(err.Error(), "undeclared name:") == -1 {
+			return
+		}
+		log.Println(err)
+	}
+	// this really matters otherise its a pain to generate a partial program.
+	conf.AllowErrors = true
+	originalPkgFinder := (*build.Context).Import
+	conf.FindPackage = func(ctxt *build.Context, fromDir, importPath string, mode build.ImportMode) (*build.Package, error) {
+		if fromDir == s {
+			return originalPkgFinder(ctxt, fromDir, importPath, mode)
+		}
+		return nil, fmt.Errorf("skipped %v %v", fromDir, importPath)
+	}
 	_, err := conf.FromArgs(args[1:], false)
 	if err != nil {
 		fmt.Println(err)
