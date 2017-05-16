@@ -18,19 +18,9 @@ import (
 
 // GetProgram load program of s a pkg path
 func GetProgram(s string) *loader.Program {
-	args := []string{"--", s}
-
-	var conf loader.Config
-	conf.ParserMode = parser.ParseComments
-	// those 3 might change later. not sure.
-	conf.TypeChecker.IgnoreFuncBodies = true
-	conf.TypeChecker.DisableUnusedImportCheck = true
-	conf.TypeChecker.Error = func(err error) {
-		log.Println(err)
-	}
-	// this really matters otherise its a pain to generate a partial program.
-	conf.AllowErrors = true
-	_, err := conf.FromArgs(args[1:], false)
+	args := []string{s}
+	conf := GetProgramLoader(s)
+	_, err := conf.FromArgs(args, false)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -42,32 +32,26 @@ func GetProgram(s string) *loader.Program {
 	return prog
 }
 
-// GetProgramFast load program of s a pkg path
-func GetProgramFast(s string) *loader.Program {
-	args := []string{"--", s}
-
+// GetProgramLoader returns a program loader.
+func GetProgramLoader(s string) loader.Config {
 	var conf loader.Config
 	conf.ParserMode = parser.ParseComments
 	// those 3 might change later. not sure.
 	conf.TypeChecker.IgnoreFuncBodies = true
 	conf.TypeChecker.DisableUnusedImportCheck = true
 	conf.TypeChecker.Error = func(err error) {
-		if strings.Index(err.Error(), "could not import") == -1 ||
-			strings.Index(err.Error(), "undeclared name:") == -1 {
-			return
-		}
 		log.Println(err)
 	}
 	// this really matters otherise its a pain to generate a partial program.
 	conf.AllowErrors = true
-	originalPkgFinder := (*build.Context).Import
-	conf.FindPackage = func(ctxt *build.Context, fromDir, importPath string, mode build.ImportMode) (*build.Package, error) {
-		if fromDir == s {
-			return originalPkgFinder(ctxt, fromDir, importPath, mode)
-		}
-		return nil, fmt.Errorf("skipped %v %v", fromDir, importPath)
-	}
-	_, err := conf.FromArgs(args[1:], false)
+	return conf
+}
+
+// GetProgramFast load program of s a pkg path
+func GetProgramFast(s string) *loader.Program {
+	args := []string{s}
+	conf := GetFastProgramLoader(s)
+	_, err := conf.FromArgs(args, false)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -77,6 +61,36 @@ func GetProgramFast(s string) *loader.Program {
 	}
 
 	return prog
+}
+
+// GetFastProgramLoader returns a fast program loader
+func GetFastProgramLoader(s string) loader.Config {
+	var conf loader.Config
+	conf.ParserMode = parser.ParseComments
+	// those 3 might change later. not sure.
+	conf.TypeChecker.IgnoreFuncBodies = true
+	conf.TypeChecker.DisableUnusedImportCheck = true
+	conf.TypeChecker.Error = func(err error) {
+		// if !err.(types.Error).Soft {
+		// 	panic(err)
+		// }
+		if strings.Index(err.Error(), "could not import") == -1 ||
+			strings.Index(err.Error(), "undeclared name:") == -1 {
+			return
+		}
+		log.Println(err)
+	}
+
+	// this really matters otherise its a pain to generate a partial program.
+	conf.AllowErrors = true
+	originalPkgFinder := (*build.Context).Import
+	conf.FindPackage = func(ctxt *build.Context, fromDir, importPath string, mode build.ImportMode) (*build.Package, error) {
+		if s == fromDir {
+			return originalPkgFinder(ctxt, fromDir, importPath, mode)
+		}
+		return nil, fmt.Errorf("skipped %v %v", fromDir, importPath)
+	}
+	return conf
 }
 
 // GetImportPath return the import path of an identifier.
@@ -108,19 +122,38 @@ func GetImportPath(p *loader.PackageInfo, name string) string {
 
 // FindTypes searches given package for every struct types definition
 func FindTypes(p *loader.PackageInfo) []string {
-	foundTypes := []string{}
+	ret := []string{}
 	for _, file := range p.Files {
 		ast.Inspect(file, func(n ast.Node) bool {
 			switch x := n.(type) {
 			case *ast.TypeSpec:
 				if _, ok := x.Type.(*ast.StructType); ok {
-					foundTypes = append(foundTypes, x.Name.Name)
+					ret = append(ret, x.Name.Name)
 				}
 			}
 			return true
 		})
 	}
-	return foundTypes
+	return ret
+}
+
+// FindFilesContainingDef given package for the files defining s.
+func FindFilesContainingDef(p *loader.PackageInfo, s string) []*ast.File {
+	ret := []*ast.File{}
+	for _, file := range p.Files {
+		ast.Inspect(file, func(n ast.Node) bool {
+			switch x := n.(type) {
+			case *ast.TypeSpec:
+				if _, ok := x.Type.(*ast.StructType); ok {
+					if x.Name.Name == s {
+						ret = append(ret, file)
+					}
+				}
+			}
+			return true
+		})
+	}
+	return ret
 }
 
 // FindStruct searches given package for struct matching given name
@@ -163,6 +196,24 @@ func FindMethods(p *loader.PackageInfo) map[string][]*ast.FuncDecl {
 		})
 	}
 	return foundMethods
+}
+
+// HasMethod with name n on type t
+func HasMethod(p *loader.PackageInfo, t, n string) bool {
+	foundMethods := FindMethods(p)
+	for _, typeMethods := range foundMethods {
+		for _, typeMethod := range typeMethods {
+			if MethodName(typeMethod) == n {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// HasStruct with name n
+func HasStruct(p *loader.PackageInfo, n string) bool {
+	return FindStruct(p, n) != nil
 }
 
 // FindCtors searches given package for every ctors of given struct list.
