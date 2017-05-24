@@ -120,6 +120,15 @@ func GetImportPath(p *loader.PackageInfo, name string) string {
 	return ret
 }
 
+// GetImportPaths ...
+func GetImportPaths(p *loader.PackageInfo, names []string) []string {
+	var ret []string
+	for _, name := range names {
+		ret = append(ret, GetImportPath(p, name))
+	}
+	return ret
+}
+
 // FindTypes searches given package for every struct types definition
 func FindTypes(p *loader.PackageInfo) []string {
 	ret := []string{}
@@ -201,8 +210,14 @@ func FindMethods(p *loader.PackageInfo) map[string][]*ast.FuncDecl {
 // HasMethod with name n on type t
 func HasMethod(p *loader.PackageInfo, t, n string) bool {
 	foundMethods := FindMethods(p)
-	for _, typeMethods := range foundMethods {
-		for _, typeMethod := range typeMethods {
+	if y, ok := foundMethods[GetPointedType(t)]; ok {
+		for _, typeMethod := range y {
+			if MethodName(typeMethod) == n {
+				return true
+			}
+		}
+	} else if y, ok := foundMethods[GetUnpointedType(t)]; ok {
+		for _, typeMethod := range y {
 			if MethodName(typeMethod) == n {
 				return true
 			}
@@ -301,6 +316,41 @@ func MethodReturnTypes(m *ast.FuncDecl) []string {
 	return ret
 }
 
+// MethodReturnNames returns all names of the out signature.
+func MethodReturnNames(m *ast.FuncDecl) []string {
+	var ret []string
+	if m.Type.Results != nil {
+		for _, p := range m.Type.Results.List {
+			if len(p.Names) > 0 {
+				x := ToString(p.Names[0])
+				if x != "" {
+					ret = append(ret, x)
+				}
+			}
+		}
+	}
+	return ret
+}
+
+// MethodReturnNamesNormalized returns all names of the out signature.
+func MethodReturnNamesNormalized(m *ast.FuncDecl) []string {
+	var ret []string
+	if m.Type.Results != nil {
+		for _, p := range m.Type.Results.List {
+			x := ""
+			if len(p.Names) > 0 {
+				x = ToString(p.Names[0])
+			}
+			if x == "" {
+				x = fmt.Sprintf("retVar%v", retVar)
+				retVar++
+			}
+			ret = append(ret, x)
+		}
+	}
+	return ret
+}
+
 var retVar int
 
 // MethodReturnVars create a list of of unqiue variables for each param of out signature.
@@ -388,29 +438,34 @@ func GetSignatureImportIdentifiers(m *ast.FuncDecl) []string {
 	ret := []string{}
 	paramsType := MethodParamTypes(m)
 	for _, p := range strings.Split(paramsType, ", ") {
-		p = strings.TrimSpace(p)
-		x := strings.Split(p, ".")
-		if len(x) > 1 {
-			y := GetUnpointedType(x[0])
-			y = GetUnslicedType(y) //todo: can do better.
-			if len(y) > 0 {
-				ret = append(ret, y)
-			}
+		p = GetPkgID(p)
+		if p != "" {
+			ret = append(ret, p)
 		}
 	}
 	returnsType := MethodReturnTypes(m)
 	for _, p := range returnsType {
-		p = strings.TrimSpace(p)
-		x := strings.Split(p, ".")
-		if len(x) > 1 {
-			y := GetUnpointedType(x[0])
-			y = GetUnslicedType(y) //todo: can do better.
-			if len(y) > 0 {
-				ret = append(ret, y)
-			}
+		p = GetPkgID(p)
+		if p != "" {
+			ret = append(ret, p)
 		}
 	}
 	return ret
+}
+
+// GetPkgID extract the pkg id in pkg.identifier
+func GetPkgID(p string) string {
+	p = strings.TrimSpace(p)
+	x := strings.Split(p, ".")
+	if len(x) > 1 {
+		y := GetUnpointedType(x[0])
+		y = GetUnslicedType(y)  //todo: can do better.
+		y = GetUnpointedType(y) //todo: can do better.
+		if len(y) > 0 {
+			return y
+		}
+	}
+	return ""
 }
 
 // SetReceiverName sets the receiver variable name of a method.
@@ -481,7 +536,7 @@ func GetPointedType(t string) string {
 
 // IsASlicedType returns true for sliceType.
 func IsASlicedType(t string) bool {
-	return len(t) > 1 && t[:1] == "[]"
+	return len(t) > 1 && t[:2] == "[]"
 }
 
 // GetUnslicedType always return the unsliced type.
@@ -491,6 +546,14 @@ func GetUnslicedType(t string) string {
 		return t[2:]
 	}
 	return t
+}
+
+// GetTypeToStructInit takes a type like *pkg.Struct into a &pkg.Struct{}.
+func GetTypeToStructInit(t string) string {
+	if IsAPointedType(t) {
+		return fmt.Sprintf("&%v{}", GetUnpointedType(t))
+	}
+	return fmt.Sprintf("%v{}", t)
 }
 
 //go:generate lister basic_gen.go string:StringSlice
@@ -607,7 +670,10 @@ func GetAnnotations(comment string, start string) map[string]string {
 	lines := strings.Split(comment, "\n")
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
-		if len(line) > len(start) && line[:len(start)] == start {
+		if strings.HasPrefix(line, "//") {
+			line = strings.TrimSpace(line[2:])
+		}
+		if len(line) > len(start) && strings.HasPrefix(line, start) {
 			line = line[len(start):]
 			x := strings.Split(line, " ")
 			if len(x) > 1 {
